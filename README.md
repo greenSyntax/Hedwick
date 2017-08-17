@@ -1,5 +1,5 @@
 # IPA Distribution
-#### An App which lets you share your AdHoc IPA File
+#### An PHP App which lets you share your AdHoc IPA File
 ------
 ## Overview
 This is a web-platform which allow developers to share their AdHoc IPA build with testers. You pass on your *App Name*, *App's Bundle ID*, *Version Number* along with the *IPA* • file.
@@ -16,6 +16,18 @@ App will return you with a LINK which you can share with people around the world
 * **index.php**
 * test.html
 
+## /css/**style.css**
+  Application level custom styling
+
+## /images
+   No Use
+
+## /manifest
+  Directory with (755 Permission) where app will store manifest.plist file. Files will have random text.
+
+## /uplosds
+  Directory with (755 Permission) where app will store *ipa files. Files Name are in timestamp format.
+  
 ## /include
 * **constant.php**
   Application level constant, error messages and HTML Litrals.
@@ -38,7 +50,7 @@ App will return you with a LINK which you can share with people around the world
 * **zipper.php**
   Handles Zip and Unzip opearation.
 
-## /vendor
+## /vendor (Third Party Files)
 * /composer
 * /css/bootstrap.min.css
 * /fonts
