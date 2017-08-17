@@ -16,8 +16,8 @@ App will return you with a LINK which you can share with people around the world
 * **index.php**
 * test.html
 
-## /css/**style.css**
-  Application level custom styling
+## /css
+  Application level custom styling i.e. **style.css**
 
 ## /images
    No Use
@@ -59,4 +59,5 @@ App will return you with a LINK which you can share with people around the world
 * /monolog
 * /psr
 * autoload.php
+
 
