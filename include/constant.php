@@ -1,5 +1,6 @@
 <?php
 
+//HOST_NAME
 #define("HOST_NAME", "http://app.greensyntax.co.in");
 #define("HOST_NAME", "http://localhost:7070/app/Share");
 define("HOST_NAME", "https://innovationm.com/iOSBuild");
@@ -68,7 +69,7 @@ class Constant{
 		</dict>
 		</array>
 		</dict>
-		</plist>"; 
+		</plist>";
 
 		//Replace App Name
 		$manifestText = str_replace("{APP_NAME}", $appName, $manifestText);

@@ -49,7 +49,7 @@ if(count($_FILES) > 0){
 
 }
 else{
-	
+
 	// Very First Time
 }
 
@@ -109,12 +109,12 @@ else{
 					</div>
 				</div>
 
-				<!--				
+				<!--
 				<br>
 
 				<div class="progress" id="percentageBar">
   					<div class="progress-bar" id="uploadProgress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-    					
+
   					</div>
 				</div>
 				-->
@@ -124,7 +124,7 @@ else{
 				if(GlobalContext::$readyToDownload == true){
 
 					echo '<p></p>';
-					
+
 					$url = Constant::getLinkUrl($createManifestFile);
 
 					# echo $url;
@@ -141,7 +141,7 @@ else{
 						echo '<div class="alert alert-success" role="alert">';
 						echo '<i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;'.$linkUrl;
 						echo '</div>';
-					}	
+					}
 				}
 
 				?>
@@ -152,7 +152,7 @@ else{
 					<input type="submit" class="btn btn-success" value="Upload Your IPA" onclick="upload_ipa();"></input>
 
 				</div>
-				
+
 				<p></p>
 
 
@@ -169,7 +169,7 @@ else{
 						$error.'
 						</div>';
 					}
-				} 
+				}
 				?>
 
 			</form>
