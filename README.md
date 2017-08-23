@@ -54,3 +54,9 @@ Directory with (755 Permission) where app will store *ipa files. Files Name are 
 * /monolog
 * /psr
 * autoload.php
+
+### Bugs
+Please post any bugs to the issue tracker found on the project's GitHub page.
+Please include the following with your issue:
+* a description of what is not working right
+* sample code to help replicate the issue
