@@ -11,9 +11,12 @@ Change the Hostname macro in **/include/constant**
 ```php
 <?php
 
-#define("HOST_NAME", "http://app.greensyntax.co.in");
-#define("HOST_NAME", "http://localhost:7070/app/Share");
+//WebHost
+define("HOST_NAME", "http://app.greensyntax.co.in");
 
+//For Local : http://localhost:7070/app/Share
+
+?>
 ```
 
 ### Project Structure
