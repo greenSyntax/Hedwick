@@ -17,19 +17,19 @@ class XmlManager{
 
 		$xml = simplexml_load_file($url) or die('Cannot Load XML');
 
-		$appName = $xml->dict->string[0];
+		$appName = $xml->dict->string[13];
 		$versionNumber = $xml->dict->string[6];
 		$bundleId = $xml->dict->string[15];
 
-		//echo "<pre>";
-		//print_r($xml->dict);
+		echo "<pre>";
+		print_r($xml->dict);
 		//print_r($xml->dict->string[0]);
 		//print_r($xml->dict->string[6]);
 		//print_r($xml->dict->string[15]);
 
-		//echo "</pre>";
+		echo "</pre>";
 		
-		$model = array("appName"=>$xml->dict->string[0], "version" => $xml->dict->string[6], "bundleId" => $xml->dict->string[15]);
+		$model = array("appName"=>$xml->dict->string[13], "version" => $xml->dict->string[6], "bundleId" => $xml->dict->string[15]);
 
 		return $model;
 	}

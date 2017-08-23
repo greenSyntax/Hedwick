@@ -34,6 +34,7 @@ if(count($_FILES) > 0){
 		$xmlManager =  new XmlManager();
 		$model = $xmlManager->parse($zipPath, $appName);
 
+		echo $model["appName"];
 		$createManifestFile = FileManager::createManifestFile(Constant::getManifestText($model["appName"], $uploadPath, $model["version"], $model["bundleId"]));
 
 		//Successfully Created
@@ -125,6 +126,8 @@ else{
 					echo '<p></p>';
 					
 					$url = Constant::getLinkUrl($createManifestFile);
+
+					# echo $url;
 
 					$linkUrl = TinyUrlManager::getMinifiedURL($url);
 

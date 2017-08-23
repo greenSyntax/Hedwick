@@ -1,7 +1,9 @@
 <?php
 
 #define("HOST_NAME", "http://app.greensyntax.co.in");
-define("HOST_NAME", "http://localhost:7070/app/Share");
+#define("HOST_NAME", "http://localhost:7070/app/Share");
+define("HOST_NAME", "https://innovationm.com/iOSBuild");
+
 
 define("APP_VERSION", "v1.0.5");
 
@@ -26,7 +28,7 @@ class Constant{
 
 	static function getLinkUrl($manifestPath){
 
-		return "itms-services://?action=download-manifest&url=".HOST_NAME."/".$manifestPath;
+		return "itms-services://?action=download-manifest&url=".HOST_NAME."/manifest/".$manifestPath;
 	}
 
 	static function getIPA($path){
