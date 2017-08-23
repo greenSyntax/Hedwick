@@ -1,10 +1,13 @@
 <?php
 
-define("HOST_NAME", "http://app.greensyntax.co.in");
-#define("HOST_NAME", "http://localhost:7070/app/Share");
+#define("HOST_NAME", "http://app.greensyntax.co.in");
+define("HOST_NAME", "http://localhost:7070/app/Share");
+
+define("APP_VERSION", "v1.0.5");
 
 define("MANIFEST_DIRECTORY_NAME", "manifest");
 define("UPLOADS_DIRECTORY_NAME", "uploads");
+define("ZIP_DIRECTORY_NAME", "temp");
 
 define("UPLOAD_DIRECTORY_NAME", "uploads");
 define("UPLOAD_FILE_SIZE", "500000000");
@@ -23,7 +26,7 @@ class Constant{
 
 	static function getLinkUrl($manifestPath){
 
-		return "itms-services://?action=download-manifest&url=".HOST_NAME."/".MANIFEST_DIRECTORY_NAME."/".$manifestPath;
+		return "itms-services://?action=download-manifest&url=".HOST_NAME."/".$manifestPath;
 	}
 
 	static function getIPA($path){
@@ -31,7 +34,7 @@ class Constant{
 		return HOST_NAME."/".$path;
 	}
 
-	static function getManifestText($appName, $versionNumber, $bundleId, $ipaPath){
+	static function getManifestText($appName, $ipaPath, $bundleId, $version){
 
 		$manifestText = "<?xml version='1.0' encoding='UTF-8'?>
 		<!DOCTYPE plist PUBLIC '-//Apple//DTD PLIST 1.0//EN' 'http://www.apple.com/DTDs/PropertyList-1.0.dtd'>
@@ -58,7 +61,7 @@ class Constant{
 		<key>kind</key>
 		<string>software</string>
 		<key>title</key>
-		<string>{APP_NAME}}</string>
+		<string>{APP_NAME}</string>
 		</dict>
 		</dict>
 		</array>
@@ -67,9 +70,9 @@ class Constant{
 
 		//Replace App Name
 		$manifestText = str_replace("{APP_NAME}", $appName, $manifestText);
-		$manifestText = str_replace("{APP_URL}", Constant::getIPA($ipaPath), $manifestText);
-		$manifestText = str_replace("{APP_VERSION}", $versionNumber, $manifestText);
 		$manifestText = str_replace("{APP_BUNDLE}", $bundleId, $manifestText);
+		$manifestText = str_replace("{APP_VERSION}", $version, $manifestText);
+		$manifestText = str_replace("{APP_URL}", Constant::getIPA($ipaPath), $manifestText);
 
 		# echo ">>".$manifestText;
 

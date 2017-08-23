@@ -6,6 +6,7 @@ class GlobalContext{
 	static $hasUploaded = false;
 	static $newName = "";
 	static $readyToDownload = false;
+	static $appName = "";
 }
 
 ?>

@@ -1,17 +1,22 @@
 <?php 
 
+require_once 'include/utility.php';
+require_once 'include/constant.php';
+
 class FileManager{
 
 
 	static function createManifestFile($manifestText){
 
-		$myfile = fopen("manifest/manifest.plist", "w") or die("Unable to open file!");
+		$manifestName = Utility::randomText().".plist";
+
+		$myfile = fopen(MANIFEST_DIRECTORY_NAME."/".$manifestName, "w") or die("Unable to open file!");
 		
 		fwrite($myfile, $manifestText);
 		
 		fclose($myfile);
 
-		return true;
+		return $manifestName;
 	}
 
 	static function deleteFile($fileName){

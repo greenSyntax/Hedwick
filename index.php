@@ -6,69 +6,50 @@ require_once 'include/global_context.php';
 require_once 'include/validation_manager.php';
 require_once 'include/file_manager.php';
 require_once 'include/tiny_url_manager.php';
+require_once 'include/zip_manager.php';
+require_once 'include/xml_manager.php';
 
 //Error
 $errorLog = array();
 
-if(count($_POST) > 0){
-	
-	// Validate HTML Tags
-	if(!empty($_POST['app_name'])){
+if(count($_FILES) > 0){
 
-		if(!empty($_POST['bundle_id'])){
+	if(!empty($_FILES['build_ipa'])){
 
-			if(!empty($_POST['version_no'])){
+		$upload = new UploadManager();
+		$uploadPath = $upload->uploadFile($_FILES['build_ipa']);
 
-				if(!empty($_FILES['build_ipa'])){
+		$appName = GlobalContext::$appName;
 
-					$appName = ValidationManager::validateField($_POST['app_name']);
-					$bundleId = ValidationManager::validateField($_POST['bundle_id']);
-					$versionNo = ValidationManager::validateField($_POST['version_no']);
+		if($appName != null){
 
+		$zipPath = $uploadPath;
 
-					$upload = new UploadManager();
-					$uploadResponse = $upload->uploadFile($_FILES['build_ipa']);
+		#$appName = Utility::getFirstName($zipPath);
 
-					if(FileManager::createManifestFile(Constant::getManifestText($appName, $versionNo, $bundleId, $uploadResponse)) == true){
+		//Extract Zip
+		$zipPath = ZipManager::extract($zipPath);
 
-						//Successfully Createt
-						GlobalContext::$readyToDownload = true;
-					}
-					else{
+		//Parse XML
+		$xmlManager =  new XmlManager();
+		$model = $xmlManager->parse($zipPath, $appName);
 
-						GlobalContext::$readyToDownload = false;
-					}
+		$createManifestFile = FileManager::createManifestFile(Constant::getManifestText($model["appName"], $uploadPath, $model["version"], $model["bundleId"]));
 
-				}
-				else{
-
-					// No Build
-					array_push($errorLog, ERROR_NO_BUILD);
-				}
-			}
-			else{
-
-				// No Version Number
-				array_push($errorLog, ERROR_NO_VERSION);
-			}
-		}
-		else{
-
-			// No Bundle ID
-			array_push($errorLog, ERROR_NO_BUNDLE);
+		//Successfully Created
+		GlobalContext::$readyToDownload = true;
 		}
 	}
 	else{
 
-		// No App Name
-		array_push($errorLog, ERROR_NO_APP_NAME);
+		// No Build
+		array_push($errorLog, ERROR_NO_BUILD);
 	}
+
 }
 else{
 	
 	// Very First Time
-	
-	//array_push($errorLog, ERROR_NO_APP_NAME);
 }
 
 ?>
@@ -97,79 +78,152 @@ else{
 		<div class="row">
 			<div class="col-sm-3"></div>
 			<div class="col-sm-6 boxContainer">
-
+				<div class="text-right"><small><?php echo APP_VERSION; ?>  <strong>ALPHA</strong></small></div>
 				<div class="text-center">
 					<h1><i class="fa fa-cloud" aria-hidden="true"></i>&nbsp;Share IPA</h1>
-					<h5 class="subtitle">Just Upload Your IPA and Distribute your Build</h5>
+					<h5 class="subtitle">Just Upload Your IPA and Distribute your AdHoc Build</h5>
 					<hr>
 				</div>
 
 				<form id="formUpload" method="POST" enctype="multipart/form-data">
+					<!--
 					<div class="form-group">
 						<label for="appName">App Name</label>
 						<input type="text" name="app_name" class="form-control" id="app_name" placeholder="App Name">
 					</div>
 					<div class="form-group">
 						<label for="bunldeLabel">Bunde ID</label>
-						<input type="text" class="form-control" name="bundle_id" id="bundle_id" placeholder="App's Bundle ID">
+						<input type="text" class="form-control" name="bundle_id" id="bundle_id" placeholder="com.domain.appname">
 					</div>
 					<div class="form-group">
 						<label for="versionLabel">Version No.</label>
-						<input type="text" class="form-control" name="version_no" id="version_no" placeholder="App's Version Number">
+						<input type="text" class="form-control" name="version_no" id="version_no" placeholder="1.0.1">
 					</div>
-					<div class="form-group">
+				-->
+
+				<div class="form-group">
+					<div class="alert alert-info" role="alert">
 						<label for="buildLabel">Upload Bundle</label>
 						<input type="file" id="build_ipa" name="build_ipa">
 					</div>
+				</div>
 
-					<input type="submit" class="btn btn-success " value="Distribute Your IPA"></input>
-					<p></p>
-					<?php
+				<!--				
+				<br>
 
-					if(GlobalContext::$readyToDownload == true){
+				<div class="progress" id="percentageBar">
+  					<div class="progress-bar" id="uploadProgress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+    					
+  					</div>
+				</div>
+				-->
 
-						$url = Constant::getLinkUrl("manifest.plist");
-						//echo "<a href=".$url." class='btn btn-primary'>Install Your App</a>";
+				<?php
 
-						$linkUrl = TinyUrlManager::getMinifiedURL($url);
+				if(GlobalContext::$readyToDownload == true){
 
-						echo "<p><input class='form-control input-sm strong' type='text' value='$linkUrl' readonly>";
+					echo '<p></p>';
+					
+					$url = Constant::getLinkUrl($createManifestFile);
+
+					$linkUrl = TinyUrlManager::getMinifiedURL($url);
+
+					if($linkUrl == null){
+
+						echo '<div class="alert alert-error" role="alert">';
+						echo '<i class="fa fa-check-circle" aria-hidden="true"></i> There might be some error. Please try again :/';
+						echo '</div>';
 					}
+					else{
+						echo '<div class="alert alert-success" role="alert">';
+						echo '<i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;'.$linkUrl;
+						echo '</div>';
+					}	
+				}
 
-					?>
+				?>
 
-					<?php
+				<br>
 
-						//If There is any Error
-					if(isset($errorLog)){
+				<div class="text-center">
+					<input type="submit" class="btn btn-success" value="Upload Your IPA" onclick="upload_ipa();"></input>
 
-						foreach ($errorLog as $error) {
+				</div>
+				
+				<p></p>
 
-							echo '<div class="alert alert-danger" role="alert">
-							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-							<span class="sr-only">Error:</span>'.
-							$error.'
-							</div>';
-						}
-					} 
-					?>
 
-				</form>
+				<?php
 
-			</div>
-			<div class="col-sm-3"></div>
+				//If There is any Error
+				if(isset($errorLog)){
+
+					foreach ($errorLog as $error) {
+
+						echo '<div class="alert alert-danger" role="alert">
+						<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+						<span class="sr-only">Error:</span>'.
+						$error.'
+						</div>';
+					}
+				} 
+				?>
+
+			</form>
+
 		</div>
-
-		<div class="row">
-			<div class="col-sm-3"></div>
-			<div class="col-sm-6 footer">
-				<h5 class="text-center strong"><i class="fa fa-copyright" aria-hidden="true"></i>&nbsp;InnovationM | <a href="http://github.com/">Fork on Github&nbsp;<i class="fa fa-github" aria-hidden="true"></i></a></h5>
-			</div>
-			<div class="col-sm-3"></div>
-		</div>
+		<div class="col-sm-3"></div>
 	</div>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<div class="row">
+		<div class="col-sm-3"></div>
+		<div class="col-sm-6 footer">
+			<h5 class="text-center strong"><i class="fa fa-copyright" aria-hidden="true"></i>&nbsp;InnovationM | <a href="https://github.com/greenSyntax/IPA-Distribution-Interface">Fork on Github&nbsp;<i class="fa fa-github" aria-hidden="true"></i></a></h5>
+		</div>
+		<div class="col-sm-3"></div>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!-- <script src="//oss.maxcdn.com/jquery.form/3.50/jquery.form.min.js"></script> -->
+
+<script>
+
+	function upload_ipa(){
+
+		$('#formUpload').ajaxForm({
+
+			beforeSubmit: function(){
+
+				//percentage.html("0%");
+				//$('#uploadProgress').attr('aria-valuenow', 0).css('width', 0+"%").text(0+"%");
+				$(".progress-bar").width("0%").html("0%");
+			},
+
+			uploadProgress: function(event, position, total, percentageComplete){
+
+
+				//percentage.html(percentageValue);
+
+				//$('#uploadProgress').attr('aria-valuenow', percentageComplete).css('width', percentageComplete+"%").text(percentageComplete+"%");
+				$(".progress-bar").width(percentageComplete+"%").html(percentageComplete+"%");
+
+			},
+
+			success: function(){
+
+				//percentage.html("100%");
+				//$('#uploadProgress').attr('aria-valuenow', 100).css('width', 100+"%").text(100+"%");
+				$(".progress-bar").width("100%").html("100%");
+			},
+
+			complete: function(xhr){
+
+			}
+		});
+	}
+
+</script>
 
 </body>
 </html>

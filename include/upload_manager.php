@@ -7,6 +7,7 @@ class UploadManager{
 
 		require_once 'include/constant.php';
 		require_once 'include/global_context.php';
+		require_once 'include/utility.php';
 	}
 
 	function uploadFile($file){
@@ -18,6 +19,9 @@ class UploadManager{
 			$file_path = $file['tmp_name'];
 			$file_size = $file['size'];
 			$file_error = $file['error'];
+
+			//Assign App Name
+			GlobalContext::$appName = Utility::getFirstName($file_name);
 
 			$file_name_array = explode('.', $file_name);
 			$file_extension = strtolower(end($file_name_array));
