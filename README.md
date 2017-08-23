@@ -6,7 +6,7 @@ An PHP App which lets you share your AdHoc IPA File
 
 This is a web-platform which allow developers to share their AdHoc IPA build with testers. You pass on your App Name, App's Bundle ID, Version Number along with the IPA • file. App will return you with a LINK which you can share with people around the world.
 
-### Deploying
+### Deployment
 Change the Hostname macro in **/include/constant**
 ```php
 <?php
