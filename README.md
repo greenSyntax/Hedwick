@@ -6,6 +6,19 @@ An PHP App which lets you share your AdHoc IPA File
 
 This is a web-platform which allow developers to share their AdHoc IPA build with testers. You pass on your App Name, App's Bundle ID, Version Number along with the IPA • file. App will return you with a LINK which you can share with people around the world.
 
+### Deployment
+Change the Hostname macro in **/include/constant**
+```php
+<?php
+
+//WebHost
+define("HOST_NAME", "http://app.greensyntax.co.in");
+
+//For Local : http://localhost:7070/app/Share
+
+?>
+```
+
 ### Project Structure
 
 * css
@@ -54,3 +67,9 @@ Directory with (755 Permission) where app will store *ipa files. Files Name are 
 * /monolog
 * /psr
 * autoload.php
+
+### Bugs
+Please post any bugs to the issue tracker found on the project's GitHub page.
+Please include the following with your issue:
+* a description of what is not working right
+* sample code to help replicate the issue
