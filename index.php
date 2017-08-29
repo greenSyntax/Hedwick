@@ -9,6 +9,11 @@ require_once 'include/tiny_url_manager.php';
 require_once 'include/zip_manager.php';
 require_once 'include/xml_manager.php';
 
+if(!isDevelopment){
+	// Turn off all error reporting
+	error_reporting(0);
+}
+
 //Error
 $errorLog = array();
 
@@ -25,8 +30,6 @@ if(count($_FILES) > 0){
 
 		$zipPath = $uploadPath;
 
-		#$appName = Utility::getFirstName($zipPath);
-
 		//Extract Zip
 		$zipPath = ZipManager::extract($zipPath);
 
@@ -34,8 +37,17 @@ if(count($_FILES) > 0){
 		$xmlManager =  new XmlManager();
 		$model = $xmlManager->parse($zipPath, $appName);
 
-		echo $model["appName"];
-		$createManifestFile = FileManager::createManifestFile(Constant::getManifestText($model["appName"], $uploadPath, $model["version"], $model["bundleId"]));
+		if($model == FAIL_LOAD_XML){
+
+				//Pass Deafult Parameters
+				$appName = Utility::getFirstName($zipPath);
+				$createManifestFile = FileManager::createManifestFile(Constant::getManifestText($appName, "1.0.1", "com.apple.developer"));
+		}
+		else{
+
+			// Pass XML Parsed Value
+			$createManifestFile = FileManager::createManifestFile(Constant::getManifestText($model["appName"], $uploadPath, $model["version"], $model["bundleId"]));
+		}
 
 		//Successfully Created
 		GlobalContext::$readyToDownload = true;

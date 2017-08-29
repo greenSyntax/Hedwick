@@ -6,7 +6,9 @@
 define("HOST_NAME", "https://innovationm.com/iOSBuild");
 
 
-define("APP_VERSION", "v1.0.5");
+define("APP_VERSION", "v1.0.6");
+define("isDevelopment", false);
+
 
 define("MANIFEST_DIRECTORY_NAME", "manifest");
 define("UPLOADS_DIRECTORY_NAME", "uploads");
@@ -24,6 +26,8 @@ define("ERROR_NO_APP_NAME", "There is No AppName");
 define("ERROR_NO_BUNDLE", "There is No BundleID");
 define("ERROR_NO_VERSION", "There is No Version Number");
 define("ERROR_NO_BUILD", "There is No IPA Build");
+define("FAIL_LOAD_XML", "Cannot Load XML");
+
 
 class Constant{
 
