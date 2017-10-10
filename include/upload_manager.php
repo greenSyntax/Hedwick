@@ -20,6 +20,9 @@ class UploadManager{
 			$file_size = $file['size'];
 			$file_error = $file['error'];
 
+			//log_manager
+			LogManager::report("01", $file_name);
+
 			//Assign App Name
 			GlobalContext::$appName = Utility::getFirstName($file_name);
 
@@ -44,8 +47,10 @@ class UploadManager{
 
 							# echo "Successfully Uploaded  ".$file_destination. " :)";
 
+							LogManager::report("02", $file_destination);
+
 							GlobalContext::$hasUploaded = true;
-							
+
 							return $file_destination;
 						}
 						else{

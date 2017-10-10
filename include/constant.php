@@ -3,10 +3,10 @@
 //HOST_NAME
 #define("HOST_NAME", "http://app.greensyntax.co.in");
 #define("HOST_NAME", "http://localhost:7070/app/Share");
-define("HOST_NAME", "https://innovationm.com/iOSBuild");
+define("HOST_NAME", "https://www.innovationm.com/iOSbuild");
 
 
-define("APP_VERSION", "v1.0.6");
+define("APP_VERSION", "v1.0.8");
 define("isDevelopment", false);
 
 
