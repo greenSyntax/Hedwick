@@ -15,10 +15,6 @@ class UdpSocket
 {
     const DATAGRAM_MAX_LENGTH = 65023;
 
-    protected $ip;
-    protected $port;
-    protected $socket;
-
     public function __construct($ip, $port = 514)
     {
         $this->ip = $ip;
@@ -33,17 +29,11 @@ class UdpSocket
 
     public function close()
     {
-        if (is_resource($this->socket)) {
-            socket_close($this->socket);
-            $this->socket = null;
-        }
+        socket_close($this->socket);
     }
 
     protected function send($chunk)
     {
-        if (!is_resource($this->socket)) {
-            throw new \LogicException('The UdpSocket to '.$this->ip.':'.$this->port.' has been closed and can not be written to anymore');
-        }
         socket_sendto($this->socket, $chunk, strlen($chunk), $flags = 0, $this->ip, $this->port);
     }
 

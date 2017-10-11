@@ -40,7 +40,7 @@ abstract class MailHandler extends AbstractProcessingHandler
     /**
      * Send a mail with the given content
      *
-     * @param string $content formatted email body to be sent
+     * @param string $content
      * @param array  $records the array of log records that formed this content
      */
     abstract protected function send($content, array $records);
@@ -51,17 +51,5 @@ abstract class MailHandler extends AbstractProcessingHandler
     protected function write(array $record)
     {
         $this->send((string) $record['formatted'], array($record));
-    }
-
-    protected function getHighestRecord(array $records)
-    {
-        $highestRecord = null;
-        foreach ($records as $record) {
-            if ($highestRecord === null || $highestRecord['level'] < $record['level']) {
-                $highestRecord = $record;
-            }
-        }
-
-        return $highestRecord;
     }
 }

@@ -28,7 +28,12 @@ class MemoryUsageProcessor extends MemoryProcessor
         $bytes = memory_get_usage($this->realUsage);
         $formatted = $this->formatBytes($bytes);
 
-        $record['extra']['memory_usage'] = $formatted;
+        $record['extra'] = array_merge(
+            $record['extra'],
+            array(
+                'memory_usage' => $formatted,
+            )
+        );
 
         return $record;
     }

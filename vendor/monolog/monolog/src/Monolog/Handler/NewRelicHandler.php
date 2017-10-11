@@ -12,14 +12,11 @@
 namespace Monolog\Handler;
 
 use Monolog\Logger;
-use Monolog\Formatter\NormalizerFormatter;
 
 /**
- * Class to record a log on a NewRelic application.
- * Enabling New Relic High Security mode may prevent capture of useful information.
+ * Class to record a log on a NewRelic application
  *
  * @see https://docs.newrelic.com/docs/agents/php-agent
- * @see https://docs.newrelic.com/docs/accounts-partnerships/accounts/security/high-security
  */
 class NewRelicHandler extends AbstractProcessingHandler
 {
@@ -41,16 +38,16 @@ class NewRelicHandler extends AbstractProcessingHandler
      * Some context and extra data is passed into the handler as arrays of values. Do we send them as is
      * (useful if we are using the API), or explode them for display on the NewRelic RPM website?
      *
-     * @var bool
+     * @var boolean
      */
     protected $explodeArrays;
 
     /**
      * {@inheritDoc}
      *
-     * @param string $appName
-     * @param bool   $explodeArrays
-     * @param string $transactionName
+     * @param string  $appName
+     * @param boolean $explodeArrays
+     * @param string  $transactionName
      */
     public function __construct(
         $level = Logger::ERROR,
@@ -81,37 +78,33 @@ class NewRelicHandler extends AbstractProcessingHandler
 
         if ($transactionName = $this->getTransactionName($record['context'])) {
             $this->setNewRelicTransactionName($transactionName);
-            unset($record['formatted']['context']['transaction_name']);
+            unset($record['context']['transaction_name']);
         }
 
         if (isset($record['context']['exception']) && $record['context']['exception'] instanceof \Exception) {
             newrelic_notice_error($record['message'], $record['context']['exception']);
-            unset($record['formatted']['context']['exception']);
+            unset($record['context']['exception']);
         } else {
             newrelic_notice_error($record['message']);
         }
 
-        if (isset($record['formatted']['context']) && is_array($record['formatted']['context'])) {
-            foreach ($record['formatted']['context'] as $key => $parameter) {
-                if (is_array($parameter) && $this->explodeArrays) {
-                    foreach ($parameter as $paramKey => $paramValue) {
-                        $this->setNewRelicParameter('context_' . $key . '_' . $paramKey, $paramValue);
-                    }
-                } else {
-                    $this->setNewRelicParameter('context_' . $key, $parameter);
+        foreach ($record['context'] as $key => $parameter) {
+            if (is_array($parameter) && $this->explodeArrays) {
+                foreach ($parameter as $paramKey => $paramValue) {
+                    newrelic_add_custom_parameter('context_' . $key . '_' . $paramKey, $paramValue);
                 }
+            } else {
+                newrelic_add_custom_parameter('context_' . $key, $parameter);
             }
         }
 
-        if (isset($record['formatted']['extra']) && is_array($record['formatted']['extra'])) {
-            foreach ($record['formatted']['extra'] as $key => $parameter) {
-                if (is_array($parameter) && $this->explodeArrays) {
-                    foreach ($parameter as $paramKey => $paramValue) {
-                        $this->setNewRelicParameter('extra_' . $key . '_' . $paramKey, $paramValue);
-                    }
-                } else {
-                    $this->setNewRelicParameter('extra_' . $key, $parameter);
+        foreach ($record['extra'] as $key => $parameter) {
+            if (is_array($parameter) && $this->explodeArrays) {
+                foreach ($parameter as $paramKey => $paramValue) {
+                    newrelic_add_custom_parameter('extra_' . $key . '_' . $paramKey, $paramValue);
                 }
+            } else {
+                newrelic_add_custom_parameter('extra_' . $key, $parameter);
             }
         }
     }
@@ -172,31 +165,10 @@ class NewRelicHandler extends AbstractProcessingHandler
     /**
      * Overwrites the name of the current transaction
      *
-     * @param string $transactionName
+     * @param $transactionName
      */
     protected function setNewRelicTransactionName($transactionName)
     {
         newrelic_name_transaction($transactionName);
-    }
-
-    /**
-     * @param string $key
-     * @param mixed  $value
-     */
-    protected function setNewRelicParameter($key, $value)
-    {
-        if (null === $value || is_scalar($value)) {
-            newrelic_add_custom_parameter($key, $value);
-        } else {
-            newrelic_add_custom_parameter($key, @json_encode($value));
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getDefaultFormatter()
-    {
-        return new NormalizerFormatter();
     }
 }

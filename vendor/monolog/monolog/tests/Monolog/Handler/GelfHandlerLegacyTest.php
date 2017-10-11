@@ -23,8 +23,6 @@ class GelfHandlerLegacyTest extends TestCase
         if (!class_exists('Gelf\MessagePublisher') || !class_exists('Gelf\Message')) {
             $this->markTestSkipped("mlehner/gelf-php not installed");
         }
-
-        require_once __DIR__ . '/GelfMockMessagePublisher.php';
     }
 
     /**
@@ -45,7 +43,7 @@ class GelfHandlerLegacyTest extends TestCase
 
     protected function getMessagePublisher()
     {
-        return new GelfMockMessagePublisher('localhost');
+        return new MockMessagePublisher('localhost');
     }
 
     public function testDebug()

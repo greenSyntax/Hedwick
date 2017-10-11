@@ -6,7 +6,7 @@
 define("HOST_NAME", "https://www.innovationm.com/iOSbuild");
 
 
-define("APP_VERSION", "v1.0.8");
+define("APP_VERSION", "v1.0.9");
 define("isDevelopment", false);
 
 
@@ -15,7 +15,7 @@ define("UPLOADS_DIRECTORY_NAME", "uploads");
 define("ZIP_DIRECTORY_NAME", "temp");
 
 define("UPLOAD_DIRECTORY_NAME", "uploads");
-define("UPLOAD_FILE_SIZE", "500000000");
+define("UPLOAD_FILE_SIZE", "200000000"); // Around 500MB
 define("FILE_TYPE", "ipa");
 
 define("ERROR_INCORRECT_PATH", "Incorrect Path");

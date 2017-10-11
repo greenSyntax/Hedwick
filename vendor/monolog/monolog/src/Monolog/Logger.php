@@ -92,14 +92,14 @@ class Logger implements LoggerInterface
      * @var array $levels Logging levels
      */
     protected static $levels = array(
-        self::DEBUG     => 'DEBUG',
-        self::INFO      => 'INFO',
-        self::NOTICE    => 'NOTICE',
-        self::WARNING   => 'WARNING',
-        self::ERROR     => 'ERROR',
-        self::CRITICAL  => 'CRITICAL',
-        self::ALERT     => 'ALERT',
-        self::EMERGENCY => 'EMERGENCY',
+        100 => 'DEBUG',
+        200 => 'INFO',
+        250 => 'NOTICE',
+        300 => 'WARNING',
+        400 => 'ERROR',
+        500 => 'CRITICAL',
+        550 => 'ALERT',
+        600 => 'EMERGENCY',
     );
 
     /**
@@ -129,11 +129,6 @@ class Logger implements LoggerInterface
     protected $processors;
 
     /**
-     * @var bool
-     */
-    protected $microsecondTimestamps = true;
-
-    /**
      * @param string             $name       The logging channel
      * @param HandlerInterface[] $handlers   Optional stack of handlers, the first one in the array is called first, etc.
      * @param callable[]         $processors Optional array of processors
@@ -154,29 +149,13 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * Return a new cloned instance with the name changed
-     *
-     * @return static
-     */
-    public function withName($name)
-    {
-        $new = clone $this;
-        $new->name = $name;
-
-        return $new;
-    }
-
-    /**
      * Pushes a handler on to the stack.
      *
-     * @param  HandlerInterface $handler
-     * @return $this
+     * @param HandlerInterface $handler
      */
     public function pushHandler(HandlerInterface $handler)
     {
         array_unshift($this->handlers, $handler);
-
-        return $this;
     }
 
     /**
@@ -194,24 +173,6 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * Set handlers, replacing all existing ones.
-     *
-     * If a map is passed, keys will be ignored.
-     *
-     * @param  HandlerInterface[] $handlers
-     * @return $this
-     */
-    public function setHandlers(array $handlers)
-    {
-        $this->handlers = array();
-        foreach (array_reverse($handlers) as $handler) {
-            $this->pushHandler($handler);
-        }
-
-        return $this;
-    }
-
-    /**
      * @return HandlerInterface[]
      */
     public function getHandlers()
@@ -222,8 +183,7 @@ class Logger implements LoggerInterface
     /**
      * Adds a processor on to the stack.
      *
-     * @param  callable $callback
-     * @return $this
+     * @param callable $callback
      */
     public function pushProcessor($callback)
     {
@@ -231,8 +191,6 @@ class Logger implements LoggerInterface
             throw new \InvalidArgumentException('Processors must be valid callables (callback or object with an __invoke method), '.var_export($callback, true).' given');
         }
         array_unshift($this->processors, $callback);
-
-        return $this;
     }
 
     /**
@@ -258,27 +216,9 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * Control the use of microsecond resolution timestamps in the 'datetime'
-     * member of new records.
-     *
-     * Generating microsecond resolution timestamps by calling
-     * microtime(true), formatting the result via sprintf() and then parsing
-     * the resulting string via \DateTime::createFromFormat() can incur
-     * a measurable runtime overhead vs simple usage of DateTime to capture
-     * a second resolution timestamp in systems which generate a large number
-     * of log events.
-     *
-     * @param bool $micro True to use microtime() to create timestamps
-     */
-    public function useMicrosecondTimestamps($micro)
-    {
-        $this->microsecondTimestamps = (bool) $micro;
-    }
-
-    /**
      * Adds a log record.
      *
-     * @param  int     $level   The logging level
+     * @param  integer $level   The logging level
      * @param  string  $message The log message
      * @param  array   $context The log context
      * @return Boolean Whether the record has been processed
@@ -293,14 +233,11 @@ class Logger implements LoggerInterface
 
         // check if any handler will handle this message so we can return early and save cycles
         $handlerKey = null;
-        reset($this->handlers);
-        while ($handler = current($this->handlers)) {
+        foreach ($this->handlers as $key => $handler) {
             if ($handler->isHandling(array('level' => $level))) {
-                $handlerKey = key($this->handlers);
+                $handlerKey = $key;
                 break;
             }
-
-            next($this->handlers);
         }
 
         if (null === $handlerKey) {
@@ -311,34 +248,22 @@ class Logger implements LoggerInterface
             static::$timezone = new \DateTimeZone(date_default_timezone_get() ?: 'UTC');
         }
 
-        // php7.1+ always has microseconds enabled, so we do not need this hack
-        if ($this->microsecondTimestamps && PHP_VERSION_ID < 70100) {
-            $ts = \DateTime::createFromFormat('U.u', sprintf('%.6F', microtime(true)), static::$timezone);
-        } else {
-            $ts = new \DateTime(null, static::$timezone);
-        }
-        $ts->setTimezone(static::$timezone);
-
         $record = array(
             'message' => (string) $message,
             'context' => $context,
             'level' => $level,
             'level_name' => $levelName,
             'channel' => $this->name,
-            'datetime' => $ts,
+            'datetime' => \DateTime::createFromFormat('U.u', sprintf('%.6F', microtime(true)), static::$timezone)->setTimezone(static::$timezone),
             'extra' => array(),
         );
 
         foreach ($this->processors as $processor) {
             $record = call_user_func($processor, $record);
         }
-
-        while ($handler = current($this->handlers)) {
-            if (true === $handler->handle($record)) {
-                break;
-            }
-
-            next($this->handlers);
+        while (isset($this->handlers[$handlerKey]) &&
+            false === $this->handlers[$handlerKey]->handle($record)) {
+            $handlerKey++;
         }
 
         return true;
@@ -453,7 +378,7 @@ class Logger implements LoggerInterface
     /**
      * Gets the name of the logging level.
      *
-     * @param  int    $level
+     * @param  integer $level
      * @return string
      */
     public static function getLevelName($level)
@@ -483,7 +408,7 @@ class Logger implements LoggerInterface
     /**
      * Checks whether the Logger has a handler that listens on the given level
      *
-     * @param  int     $level
+     * @param  integer $level
      * @return Boolean
      */
     public function isHandling($level)
@@ -513,7 +438,9 @@ class Logger implements LoggerInterface
      */
     public function log($level, $message, array $context = array())
     {
-        $level = static::toMonologLevel($level);
+        if (is_string($level) && defined(__CLASS__.'::'.strtoupper($level))) {
+            $level = constant(__CLASS__.'::'.strtoupper($level));
+        }
 
         return $this->addRecord($level, $message, $context);
     }
@@ -684,17 +611,5 @@ class Logger implements LoggerInterface
     public function emergency($message, array $context = array())
     {
         return $this->addRecord(static::EMERGENCY, $message, $context);
-    }
-
-    /**
-     * Set the timezone to be used for the timestamp of log records.
-     *
-     * This is stored globally for all Logger instances
-     *
-     * @param \DateTimeZone $tz Timezone object
-     */
-    public static function setTimezone(\DateTimeZone $tz)
-    {
-        self::$timezone = $tz;
     }
 }

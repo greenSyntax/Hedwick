@@ -22,16 +22,6 @@ class TagProcessor
 
     public function __construct(array $tags = array())
     {
-        $this->setTags($tags);
-    }
-
-    public function addTags(array $tags = array())
-    {
-        $this->tags = array_merge($this->tags, $tags);
-    }
-
-    public function setTags(array $tags = array())
-    {
         $this->tags = $tags;
     }
 
