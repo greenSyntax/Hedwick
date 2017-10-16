@@ -26,8 +26,8 @@ class UploadManager{
 			$file_name_array = explode('.', $file_name);
 			$file_extension = strtolower(end($file_name_array));
 
-			//Only *.IPA files are allowed
-			$allowedExtension = array(FILE_TYPE);
+			//Only *.IPA and *.APK files are allowed
+			$allowedExtension = array(IPA, APK);
 
 			if(in_array($file_extension, $allowedExtension)){
 
@@ -45,7 +45,7 @@ class UploadManager{
 							# echo "Successfully Uploaded  ".$file_destination. " :)";
 
 							GlobalContext::$hasUploaded = true;
-							
+
 							return $file_destination;
 						}
 						else{

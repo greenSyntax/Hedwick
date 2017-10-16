@@ -16,7 +16,8 @@ define("ZIP_DIRECTORY_NAME", "temp");
 
 define("UPLOAD_DIRECTORY_NAME", "uploads");
 define("UPLOAD_FILE_SIZE", "500000000");
-define("FILE_TYPE", "ipa");
+define("IPA", "ipa");
+define("APK", "apk");
 
 define("ERROR_INCORRECT_PATH", "Incorrect Path");
 define("ERROR_INVALID_SIZE", "Greater than assigned size");
