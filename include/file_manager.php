@@ -22,8 +22,6 @@ class FileManager{
 
 		$file = fopen($filePath, "r") or die("Unable to Open $filePath file");
 
-		
-
 	}
 
 	static function deleteFile($fileName){

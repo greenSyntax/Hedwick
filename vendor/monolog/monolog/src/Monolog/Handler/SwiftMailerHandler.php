@@ -12,8 +12,6 @@
 namespace Monolog\Handler;
 
 use Monolog\Logger;
-use Monolog\Formatter\LineFormatter;
-use Swift;
 
 /**
  * SwiftMailerHandler uses Swift_Mailer to send the emails
@@ -23,20 +21,25 @@ use Swift;
 class SwiftMailerHandler extends MailHandler
 {
     protected $mailer;
-    private $messageTemplate;
+    protected $message;
 
     /**
      * @param \Swift_Mailer           $mailer  The mailer to use
      * @param callable|\Swift_Message $message An example message for real messages, only the body will be replaced
-     * @param int                     $level   The minimum logging level at which this handler will be triggered
+     * @param integer                 $level   The minimum logging level at which this handler will be triggered
      * @param Boolean                 $bubble  Whether the messages that are handled can bubble up the stack or not
      */
     public function __construct(\Swift_Mailer $mailer, $message, $level = Logger::ERROR, $bubble = true)
     {
         parent::__construct($level, $bubble);
-
-        $this->mailer = $mailer;
-        $this->messageTemplate = $message;
+        $this->mailer  = $mailer;
+        if (!$message instanceof \Swift_Message && is_callable($message)) {
+            $message = call_user_func($message);
+        }
+        if (!$message instanceof \Swift_Message) {
+            throw new \InvalidArgumentException('You must provide either a Swift_Message instance or a callable returning it');
+        }
+        $this->message = $message;
     }
 
     /**
@@ -44,56 +47,10 @@ class SwiftMailerHandler extends MailHandler
      */
     protected function send($content, array $records)
     {
-        $this->mailer->send($this->buildMessage($content, $records));
-    }
-
-    /**
-     * Creates instance of Swift_Message to be sent
-     *
-     * @param  string         $content formatted email body to be sent
-     * @param  array          $records Log records that formed the content
-     * @return \Swift_Message
-     */
-    protected function buildMessage($content, array $records)
-    {
-        $message = null;
-        if ($this->messageTemplate instanceof \Swift_Message) {
-            $message = clone $this->messageTemplate;
-            $message->generateId();
-        } elseif (is_callable($this->messageTemplate)) {
-            $message = call_user_func($this->messageTemplate, $content, $records);
-        }
-
-        if (!$message instanceof \Swift_Message) {
-            throw new \InvalidArgumentException('Could not resolve message as instance of Swift_Message or a callable returning it');
-        }
-
-        if ($records) {
-            $subjectFormatter = new LineFormatter($message->getSubject());
-            $message->setSubject($subjectFormatter->format($this->getHighestRecord($records)));
-        }
-
+        $message = clone $this->message;
         $message->setBody($content);
-        if (version_compare(Swift::VERSION, '6.0.0', '>=')) {
-            $message->setDate(new \DateTimeImmutable());
-        } else {
-            $message->setDate(time());
-        }
+        $message->setDate(time());
 
-        return $message;
-    }
-
-    /**
-     * BC getter, to be removed in 2.0
-     */
-    public function __get($name)
-    {
-        if ($name === 'message') {
-            trigger_error('SwiftMailerHandler->message is deprecated, use ->buildMessage() instead to retrieve the message', E_USER_DEPRECATED);
-
-            return $this->buildMessage(null, array());
-        }
-
-        throw new \InvalidArgumentException('Invalid property '.$name);
+        $this->mailer->send($message);
     }
 }

@@ -26,11 +26,12 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
     /**
      * {@inheritDoc}
      *
-     * Formatted output may contain some formatting markers to be transferred to `console.log` using the %c format.
+     * Formatted output may contain some formatting markers to be transfered to `console.log` using the %c format.
      *
      * Example of formatted string:
      *
      *     You can do [[blue text]]{color: blue} or [[green background]]{background-color: green; color: white}
+     *
      */
     protected function getDefaultFormatter()
     {
@@ -46,29 +47,31 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
         self::$records[] = $record;
 
         // Register shutdown handler if not already done
-        if (!self::$initialized) {
+        if (PHP_SAPI !== 'cli' && !self::$initialized) {
             self::$initialized = true;
-            $this->registerShutdownFunction();
+            register_shutdown_function(array('Monolog\Handler\BrowserConsoleHandler', 'send'));
         }
     }
 
     /**
      * Convert records to javascript console commands and send it to the browser.
-     * This method is automatically called on PHP shutdown if output is HTML or Javascript.
+     * This method is automatically called on PHP shutdown if output is HTML.
      */
     public static function send()
     {
-        $format = self::getResponseFormat();
-        if ($format === 'unknown') {
-            return;
+        // Check content type
+        foreach (headers_list() as $header) {
+            if (stripos($header, 'content-type:') === 0) {
+                if (stripos($header, 'text/html') === false) {
+                    // This handler only works with HTML outputs
+                    return;
+                }
+                break;
+            }
         }
 
         if (count(self::$records)) {
-            if ($format === 'html') {
-                self::writeOutput('<script>' . self::generateScript() . '</script>');
-            } elseif ($format === 'js') {
-                self::writeOutput(self::generateScript());
-            }
+            echo '<script>' . self::generateScript() . '</script>';
             self::reset();
         }
     }
@@ -79,55 +82,6 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
     public static function reset()
     {
         self::$records = array();
-    }
-
-    /**
-     * Wrapper for register_shutdown_function to allow overriding
-     */
-    protected function registerShutdownFunction()
-    {
-        if (PHP_SAPI !== 'cli') {
-            register_shutdown_function(array('Monolog\Handler\BrowserConsoleHandler', 'send'));
-        }
-    }
-
-    /**
-     * Wrapper for echo to allow overriding
-     *
-     * @param string $str
-     */
-    protected static function writeOutput($str)
-    {
-        echo $str;
-    }
-
-    /**
-     * Checks the format of the response
-     *
-     * If Content-Type is set to application/javascript or text/javascript -> js
-     * If Content-Type is set to text/html, or is unset -> html
-     * If Content-Type is anything else -> unknown
-     *
-     * @return string One of 'js', 'html' or 'unknown'
-     */
-    protected static function getResponseFormat()
-    {
-        // Check content type
-        foreach (headers_list() as $header) {
-            if (stripos($header, 'content-type:') === 0) {
-                // This handler only works with HTML and javascript outputs
-                // text/javascript is obsolete in favour of application/javascript, but still used
-                if (stripos($header, 'application/javascript') !== false || stripos($header, 'text/javascript') !== false) {
-                    return 'js';
-                }
-                if (stripos($header, 'text/html') === false) {
-                    return 'unknown';
-                }
-                break;
-            }
-        }
-
-        return 'html';
     }
 
     private static function generateScript()
@@ -212,7 +166,7 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
 
     private static function quote($arg)
     {
-        return '"' . addcslashes($arg, "\"\n\\") . '"';
+        return '"' . addcslashes($arg, "\"\n") . '"';
     }
 
     private static function call()

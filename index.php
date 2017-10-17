@@ -8,6 +8,7 @@ require_once 'include/file_manager.php';
 require_once 'include/tiny_url_manager.php';
 require_once 'include/zip_manager.php';
 require_once 'include/xml_manager.php';
+require_once 'include/log_manager.php';
 
 if(!isDevelopment){
 	// Turn off all error reporting
@@ -21,6 +22,9 @@ if(count($_FILES) > 0){
 
 	if(!empty($_FILES['build_ipa'])){
 
+		LogManager::report("0", "========START========");
+		LogManager::report("0", Utility::getCurrentDateTime());
+
 		$upload = new UploadManager();
 		$uploadPath = $upload->uploadFile($_FILES['build_ipa']);
 
@@ -30,6 +34,8 @@ if(count($_FILES) > 0){
 
 		$zipPath = $uploadPath;
 
+		LogManager::report("03", $uploadPath);
+
 		//Extract Zip
 		$zipPath = ZipManager::extract($zipPath);
 
@@ -37,13 +43,24 @@ if(count($_FILES) > 0){
 		$xmlManager =  new XmlManager();
 		$model = $xmlManager->parse($zipPath, $appName);
 
+		LogManager::report("04", $model);
+
 		if($model == FAIL_LOAD_XML){
 
 				//Pass Deafult Parameters
-				$appName = Utility::getFirstName($zipPath);
-				$createManifestFile = FileManager::createManifestFile(Constant::getManifestText($appName, "1.0.1", "com.apple.developer"));
+				$appName = $appName;
+
+				//log_manager
+				LogManager::report("05", $appName);
+
+				$createManifestFile = FileManager::createManifestFile(Constant::getManifestText($appName, $uploadPath, "1.0.1", "com.apple.developer"));
 		}
 		else{
+
+			//log_manager
+			LogManager::report("06", $model["appName"]);
+			LogManager::report("07", $model["version"]);
+			LogManager::report("08", $model["bundleId"]);
 
 			// Pass XML Parsed Value
 			$createManifestFile = FileManager::createManifestFile(Constant::getManifestText($model["appName"], $uploadPath, $model["version"], $model["bundleId"]));
@@ -139,11 +156,19 @@ else{
 
 					$url = Constant::getLinkUrl($createManifestFile);
 
+					//log_manager
+					LogManager::report("09", $url);
+
 					# echo $url;
 
 					$linkUrl = TinyUrlManager::getMinifiedURL($url);
 
-					if($linkUrl == null){
+					//log_manager
+					LogManager::report("10", $linkUrl);
+					LogManager::report("11", "========END========");
+				
+
+					if($linkUrl == null) {
 
 						echo '<div class="alert alert-error" role="alert">';
 						echo '<i class="fa fa-check-circle" aria-hidden="true"></i> There might be some error. Please try again :/';

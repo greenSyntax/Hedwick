@@ -14,6 +14,12 @@
 	    return $randomString;
 		}
 
+		# Current Date and RuntimeException
+		static function getCurrentDateTime(){
+
+			return date("Y-m-d h:i:sa", time());
+		}
+
 		# GET FIRST NAME OF THE APP
 		static function getFirstName($appName){
 

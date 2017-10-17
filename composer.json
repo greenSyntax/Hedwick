@@ -1,0 +1,13 @@
+{
+    "name": "IPA-Distribution-Interface",
+    "description": "AdHoc Distribution Tool",
+    "authors": [
+        {
+            "name": "Abhishek Kumar Ravi",
+            "email": "ab.abhishek.ravi@gmail.com"
+        }
+    ],
+    "require": {
+        "monolog/monolog": "1.12.0"
+    }
+}

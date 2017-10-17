@@ -19,7 +19,6 @@ use Monolog\Formatter\LogglyFormatter;
  *
  * @author Przemek Sobstel <przemek@sobstel.org>
  * @author Adam Pancutt <adam@pancutt.com>
- * @author Gregory Barchard <gregory@barchard.net>
  */
 class LogglyHandler extends AbstractProcessingHandler
 {
@@ -29,7 +28,7 @@ class LogglyHandler extends AbstractProcessingHandler
 
     protected $token;
 
-    protected $tag = array();
+    protected $tag;
 
     public function __construct($token, $level = Logger::DEBUG, $bubble = true)
     {
@@ -44,16 +43,12 @@ class LogglyHandler extends AbstractProcessingHandler
 
     public function setTag($tag)
     {
-        $tag = !empty($tag) ? $tag : array();
-        $this->tag = is_array($tag) ? $tag : array($tag);
+        $this->tag = $tag;
     }
 
     public function addTag($tag)
     {
-        if (!empty($tag)) {
-            $tag = is_array($tag) ? $tag : array($tag);
-            $this->tag = array_unique(array_merge($this->tag, $tag));
-        }
+        $this->tag = (strlen($this->tag) > 0) ? $this->tag .','. $tag : $tag;
     }
 
     protected function write(array $record)
@@ -80,8 +75,8 @@ class LogglyHandler extends AbstractProcessingHandler
 
         $headers = array('Content-Type: application/json');
 
-        if (!empty($this->tag)) {
-            $headers[] = 'X-LOGGLY-TAG: '.implode(',', $this->tag);
+        if ($this->tag) {
+            $headers[] = "X-LOGGLY-TAG: {$this->tag}";
         }
 
         $ch = curl_init();
@@ -92,7 +87,8 @@ class LogglyHandler extends AbstractProcessingHandler
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        Curl\Util::execute($ch);
+        curl_exec($ch);
+        curl_close($ch);
     }
 
     protected function getDefaultFormatter()

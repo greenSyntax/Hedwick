@@ -26,9 +26,9 @@ class XmlManager{
 
 		echo "<pre>";
 		print_r($xml->dict);
-		//print_r($xml->dict->string[13]);
-		//print_r($xml->dict->string[6]);
-		//print_r($xml->dict->string[15]);
+		print_r($xml->dict->string[13]);
+		print_r($xml->dict->string[6]);
+		print_r($xml->dict->string[15]);
 
 		echo "</pre>";
 
