@@ -79,7 +79,8 @@ else{
 
 	<title>Share Your IPA</title>
 
-	<link href="https://fonts.googleapis.com/css?family=Montserrat:300" rel="stylesheet">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
 	<link rel="stylesheet" href="vendor/css/bootstrap.min.css">
 	<link rel="stylesheet" href="vendor/css/font-awesome.min.css">
