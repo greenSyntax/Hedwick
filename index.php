@@ -15,6 +15,8 @@ if(!isDevelopment){
 	error_reporting(0);
 }
 
+# print_r($_POST);
+
 //Error
 $errorLog = array();
 
@@ -166,7 +168,7 @@ else{
 					//log_manager
 					LogManager::report("10", $linkUrl);
 					LogManager::report("11", "========END========");
-				
+
 
 					if($linkUrl == null) {
 

@@ -30,7 +30,7 @@ class UploadManager{
 			$file_extension = strtolower(end($file_name_array));
 
 			//Only *.IPA and *.APK files are allowed
-			$allowedExtension = array(IPA, APK);
+			$allowedExtension = array(FILE_TYPE);
 
 			if(in_array($file_extension, $allowedExtension)){
 
