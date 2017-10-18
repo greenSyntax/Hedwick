@@ -25,33 +25,43 @@ if(count($_FILES) > 0){
 		$uploadPath = $upload->uploadFile($_FILES['build_ipa']);
 
 		$appName = GlobalContext::$appName;
-
+echo $uploadPath;
 		if($appName != null){
 
-		$zipPath = $uploadPath;
+			if(GlobalContext::$extension == "apk"){ // Android
 
-		//Extract Zip
-		$zipPath = ZipManager::extract($zipPath);
 
-		//Parse XML
-		$xmlManager =  new XmlManager();
-		$model = $xmlManager->parse($zipPath, $appName);
+				//Successfully Created
+				GlobalContext::$readyToDownload = true;
 
-		if($model == FAIL_LOAD_XML){
+			}
+			else {
 
-				//Pass Deafult Parameters
-				$appName = Utility::getFirstName($zipPath);
-				$createManifestFile = FileManager::createManifestFile(Constant::getManifestText($appName, "1.0.1", "com.apple.developer"));
-		}
-		else{
+						$zipPath = $uploadPath;
 
-			// Pass XML Parsed Value
-			$createManifestFile = FileManager::createManifestFile(Constant::getManifestText($model["appName"], $uploadPath, $model["version"], $model["bundleId"]));
-		}
+						//Extract Zip
+						$zipPath = ZipManager::extract($zipPath);
 
-		//Successfully Created
-		GlobalContext::$readyToDownload = true;
-		}
+						//Parse XML
+						$xmlManager =  new XmlManager();
+						$model = $xmlManager->parse($zipPath, $appName);
+
+						if($model == FAIL_LOAD_XML){
+
+								//Pass Deafult Parameters
+								$appName = Utility::getFirstName($zipPath);
+								$createManifestFile = FileManager::createManifestFile(Constant::getManifestText($appName, "1.0.1", "com.apple.developer"));
+						}
+						else{
+
+							// Pass XML Parsed Value
+							$createManifestFile = FileManager::createManifestFile(Constant::getManifestText($model["appName"], $uploadPath, $model["version"], $model["bundleId"]));
+						}
+
+						//Successfully Created
+						GlobalContext::$readyToDownload = true;
+						}
+			}
 	}
 	else{
 
@@ -138,9 +148,9 @@ else{
 
 					echo '<p></p>';
 
-					$url = Constant::getLinkUrl($createManifestFile);
+					$url = GlobalContext::$readyToDownload == "apk" ? $uploadPath : Constant::getLinkUrl($createManifestFile);
 
-					# echo $url;
+					echo $url;
 
 					$linkUrl = TinyUrlManager::getMinifiedURL($url);
 
