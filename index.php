@@ -30,21 +30,24 @@ if(count($_FILES) > 0){
 		$upload = new UploadManager();
 		$uploadPath = $upload->uploadFile($_FILES['build_ipa']);
 
+		LogManager::report("03", $uploadPath);
+
 		$appName = GlobalContext::$appName;
 
 		if($appName != null){
+			if(GlobalContext::$extension == "apk"){ // Android
 
-		$zipPath = $uploadPath;
+				//Successfully Created
+				GlobalContext::$readyToDownload = true;
 
-		LogManager::report("03", $uploadPath);
 
-		//Extract Zip
-		$zipPath = ZipManager::extract($zipPath);
+			}
+			else {
 
-		//Parse XML
-		$xmlManager =  new XmlManager();
-		$model = $xmlManager->parse($zipPath, $appName);
+						$zipPath = $uploadPath;
 
+						//Extract Zip
+						$zipPath = ZipManager::extract($zipPath);
 		LogManager::report("04", $model);
 
 		if($model == FAIL_LOAD_XML){
@@ -67,10 +70,26 @@ if(count($_FILES) > 0){
 			// Pass XML Parsed Value
 			$createManifestFile = FileManager::createManifestFile(Constant::getManifestText($model["appName"], $uploadPath, $model["version"], $model["bundleId"]));
 		}
+						//Parse XML
+						$xmlManager =  new XmlManager();
+						$model = $xmlManager->parse($zipPath, $appName);
 
-		//Successfully Created
-		GlobalContext::$readyToDownload = true;
-		}
+						if($model == FAIL_LOAD_XML){
+
+								//Pass Deafult Parameters
+								$appName = Utility::getFirstName($zipPath);
+								$createManifestFile = FileManager::createManifestFile(Constant::getManifestText($appName, "1.0.1", "com.apple.developer"));
+						}
+						else{
+
+							// Pass XML Parsed Value
+							$createManifestFile = FileManager::createManifestFile(Constant::getManifestText($model["appName"], $uploadPath, $model["version"], $model["bundleId"]));
+						}
+
+						//Successfully Created
+						GlobalContext::$readyToDownload = true;
+						}
+			}
 	}
 	else{
 
@@ -98,7 +117,8 @@ else{
 
 	<title>Share Your IPA</title>
 
-	<link href="https://fonts.googleapis.com/css?family=Montserrat:300" rel="stylesheet">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
 	<link rel="stylesheet" href="vendor/css/bootstrap.min.css">
 	<link rel="stylesheet" href="vendor/css/font-awesome.min.css">
@@ -163,6 +183,7 @@ else{
 
 					# echo $url;
 
+					$url = GlobalContext::$readyToDownload == "apk" ? $uploadPath : Constant::getLinkUrl($createManifestFile);
 					$linkUrl = TinyUrlManager::getMinifiedURL($url);
 
 					//log_manager

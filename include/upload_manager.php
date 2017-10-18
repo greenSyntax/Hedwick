@@ -29,8 +29,11 @@ class UploadManager{
 			$file_name_array = explode('.', $file_name);
 			$file_extension = strtolower(end($file_name_array));
 
+
+			GlobalContext::$extension = $file_extension;
+
 			//Only *.IPA and *.APK files are allowed
-			$allowedExtension = array(FILE_TYPE);
+			$allowedExtension = array(APK, IPA);
 
 			if(in_array($file_extension, $allowedExtension)){
 
@@ -75,7 +78,6 @@ class UploadManager{
 
 				GlobalContext::$hasUploaded = false;
 				if($file_extension != null){
-
 					return ERROR_INVALID_FILE;
 				}
 				else{
