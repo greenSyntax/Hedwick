@@ -130,7 +130,7 @@ else{
 		<div class="row">
 			<div class="col-sm-3"></div>
 			<div class="col-sm-6 boxContainer">
-				<div class="text-right"><small><?php echo APP_VERSION; ?>  <strong>ALPHA</strong></small></div>
+				<div class="text-right"><small><?php echo APP_VERSION; ?>  <strong>BETA</strong></small></div>
 				<div class="text-center">
 					<h1><i class="fa fa-cloud" aria-hidden="true"></i>&nbsp;Share IPA</h1>
 					<h5 class="subtitle">Just Upload Your IPA and Distribute your AdHoc Build</h5>

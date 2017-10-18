@@ -6,7 +6,7 @@
 define("HOST_NAME", "https://www.innovationm.com/iOSbuild");
 
 
-define("APP_VERSION", "v1.0.9");
+define("APP_VERSION", "v1.0.10");
 define("isDevelopment", false);
 
 
