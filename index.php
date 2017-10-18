@@ -25,11 +25,10 @@ if(count($_FILES) > 0){
 		$uploadPath = $upload->uploadFile($_FILES['build_ipa']);
 
 		$appName = GlobalContext::$appName;
-echo $uploadPath;
+
 		if($appName != null){
 
 			if(GlobalContext::$extension == "apk"){ // Android
-
 
 				//Successfully Created
 				GlobalContext::$readyToDownload = true;
@@ -149,8 +148,6 @@ else{
 					echo '<p></p>';
 
 					$url = GlobalContext::$readyToDownload == "apk" ? $uploadPath : Constant::getLinkUrl($createManifestFile);
-
-					echo $url;
 
 					$linkUrl = TinyUrlManager::getMinifiedURL($url);
 

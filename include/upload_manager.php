@@ -20,7 +20,6 @@ class UploadManager{
 			$file_size = $file['size'];
 			$file_error = $file['error'];
 
-			print_r($file);
 			//Assign App Name
 			GlobalContext::$appName = Utility::getFirstName($file_name);
 
@@ -31,7 +30,7 @@ class UploadManager{
 			GlobalContext::$extension = $file_extension;
 
 			//Only *.IPA and *.APK files are allowed
-			$allowedExtension = array(IPA);
+			$allowedExtension = array(APK, IPA);
 
 			if(in_array($file_extension, $allowedExtension)){
 
@@ -43,11 +42,10 @@ class UploadManager{
 						$file_new_name = uniqid('',true).'.'.$file_extension;
 
 						$file_destination = UPLOAD_DIRECTORY_NAME.'/'.$file_new_name;
-						echo $file_path;
 
 						if(move_uploaded_file($file_path, $file_destination)){
 
-							echo "Successfully Uploaded  ".$file_destination. " :)";
+							# echo "Successfully Uploaded  ".$file_destination. " :)";
 
 							GlobalContext::$hasUploaded = true;
 
@@ -75,7 +73,6 @@ class UploadManager{
 
 				GlobalContext::$hasUploaded = false;
 				if($file_extension != null){
-					echo "LOL";
 					return ERROR_INVALID_FILE;
 				}
 				else{
