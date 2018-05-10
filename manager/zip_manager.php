@@ -1,7 +1,6 @@
 <?php
 
-require_once 'include/utility.php';
-require_once 'include/constant.php';
+require 'utils/context.php';
 
 class ZipManager{
 

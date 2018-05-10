@@ -1,36 +1,23 @@
-
 <?php
 
 class UploadManager{
 
 	function __construct(){
-
-		require_once 'include/constant.php';
-		require_once 'include/global_context.php';
-		require_once 'include/utility.php';
+		require 'utils/context.php';
 	}
 
-	function uploadFile($file){
+	function uploadFile($uploadFile){
 
-		if(isset($file)){
+		if(isset($uploadFile)){
 
 			//File Information
-			$file_name = $file['name'];
-			$file_path = $file['tmp_name'];
-			$file_size = $file['size'];
-			$file_error = $file['error'];
-
-			//log_manager
-			LogManager::report("01", $file_name);
-
-			//Assign App Name
-			GlobalContext::$appName = Utility::getFirstName($file_name);
+			$file_name = $uploadFile['name'];
+			$file_path = $uploadFile['tmp_name'];
+			$file_size = $uploadFile['size'];
+			$file_error = $uploadFile['error'];
 
 			$file_name_array = explode('.', $file_name);
 			$file_extension = strtolower(end($file_name_array));
-
-
-			GlobalContext::$extension = $file_extension;
 
 			//Only *.IPA and *.APK files are allowed
 			$allowedExtension = array(APK, IPA);
@@ -50,33 +37,25 @@ class UploadManager{
 
 							# echo "Successfully Uploaded  ".$file_destination. " :)";
 
-							LogManager::report("02", $file_destination);
-
-							GlobalContext::$hasUploaded = true;
-
 							return $file_destination;
 						}
 						else{
 
-							GlobalContext::$hasUploaded = false;
 							return ERROR_INCORRECT_PATH;
 						}
 					}
 					else{
 
-						GlobalContext::$hasUploaded = false;
 						return ERROR_INVALID_SIZE; //Size is greather than Limit.
 					}
 				}
 				else{
 
-					GlobalContext::$hasUploaded = false;
 					return "$file_error";
 				}
 			}
 			else{
 
-				GlobalContext::$hasUploaded = false;
 				if($file_extension != null){
 					return ERROR_INVALID_FILE;
 				}

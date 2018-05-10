@@ -1,8 +1,6 @@
 <?php
-require_once 'include/constant.php';
-require_once 'include/utility.php';
-require_once 'include/global_context.php';
-require_once 'include/form_model.php';
+
+require 'utils/context.php';
 
 class XmlManager{
 
