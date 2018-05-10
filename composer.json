@@ -1,6 +1,6 @@
 {
-    "name": "IPA-Distribution-Interface",
-    "description": "AdHoc Distribution Tool",
+    "name": "Hedwigapp",
+    "description": "Archive Share Tool",
     "authors": [
         {
             "name": "Abhishek Kumar Ravi",
@@ -9,5 +9,8 @@
     ],
     "require": {
         "monolog/monolog": "1.12.0"
-    }
+    },
+    "require-dev": {
+        "heroku/heroku-buildpack-php": "*"
+      }
 }
