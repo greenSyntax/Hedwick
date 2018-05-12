@@ -4,7 +4,7 @@ class ManifestController {
 
     // Create Manifest File
     static function createManifestFile($appName, $uploadPath) {
-        return FileManager::createManifestFile(ManifestController::prepareManifestContent($appName, "com.apple.developer", "1.0.1", $uploadPath));
+        return FileManager::createManifestFile(ManifestController::prepareManifestContent($appName, "com.apple.developer", "1.0.1", Utility::getHostName()."".$uploadPath));
     }
 
     // Prepare Manifest Body Content

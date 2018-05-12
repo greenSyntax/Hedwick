@@ -36,7 +36,7 @@ if(count($_FILES) > 0) {
 				archiveForAndroid($uploadPath);
 			}		
 			else {
-				archiveForiOS($uploadPath);
+				archiveForiOS($uploadPath, $buildController);
 			}
 
 		} 
@@ -74,7 +74,7 @@ function archiveForAndroid($uploadPath) {
 	}
 }
 
-function archiveForiOS($uploadPath) {
+function archiveForiOS($uploadPath, $buildController) {
 
 	if($uploadPath != null) {
 
@@ -117,8 +117,7 @@ function archiveForiOS($uploadPath) {
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
-	<link rel="stylesheet" href="vendor/css/bootstrap.min.css">
-	<link rel="stylesheet" href="vendor/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/style.css">
 
 </head>

@@ -1,7 +1,12 @@
 <?php
 
 class Utility {
-    
+	
+	// Get Requested Domain Name
+	static function getHostName() {
+		return "https://".HostManager::getDomain();
+	}
+	
     // Random Text of defined Length
     static function randomText($length = 10) {
 

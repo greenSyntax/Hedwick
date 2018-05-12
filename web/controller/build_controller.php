@@ -13,11 +13,11 @@ class BuildController {
     }
 
     function getIPALinkUrl($manifestPath){
-		return "itms-services://?action=download-manifest&url=".HOST_NAME."/".MANIFEST_DIRECTORY_NAME."/".$manifestPath;
+		return "itms-services://?action=download-manifest&url=".Utility::getHostName()."/".MANIFEST_DIRECTORY_NAME."/".$manifestPath;
 	}
 
     function getBuildPath($path){
-		return HOST_NAME."/".$path;
+		return Utility::getHostName()."/".$path;
 	}
 
     // Save Upload File Metadat into Context

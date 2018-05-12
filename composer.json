@@ -7,6 +7,13 @@
             "email": "ab.abhishek.ravi@gmail.com"
         }
     ],
+    "scripts": {
+        "post-install-cmd": [
+          "php -r \"chmod( __DIR__ . '/web/uploads', 0777);\"",
+          "php -r \"chmod( __DIR__ . '/web/manifest', 0777);\"",
+          "php -r \"chmod( __DIR__ . '/web/history.log', 0777);\""
+        ]
+      },
     "require": {
         "monolog/monolog": "1.12.0"
     },

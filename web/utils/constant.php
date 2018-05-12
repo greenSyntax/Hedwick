@@ -1,12 +1,6 @@
 <?php
 
-//HOST_NAME
-#define("HOST_NAME", "https://app.greensyntax.co.in/AppBuilder");
-define("HOST_NAME", "http://localhost:7070/app/Share");
-#define("HOST_NAME", "https://www.innovationm.com/iOSbuild");
-
-
-define("APP_VERSION", "v2.1.1");
+define("APP_VERSION", "v2.1.6");
 define("isDevelopment", true);
 
 define('APP_NAME', 'Share Your Archive');

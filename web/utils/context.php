@@ -12,6 +12,7 @@ require_once 'controller/sharing_controller.php';
 
 // Manager
 require_once 'manager/upload_manager.php';
+require_once 'manager/host_manager.php';
 require_once 'manager/validation_manager.php';
 require_once 'manager/file_manager.php';
 require_once 'manager/tiny_url_manager.php';
