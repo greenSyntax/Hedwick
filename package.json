@@ -1,0 +1,20 @@
+{
+  "name": "hedwick",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Abhishek Kumar Ravi",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.3",
+    "express-fileupload": "^0.4.0",
+    "express-upload": "^0.1.0",
+    "turl": "^1.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.3"
+  }
+}
